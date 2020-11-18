@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Slider</title>
+    <link rel="stylesheet" href="style/common.css">
+    <style>
+        html,body {
+            width: 100%;
+            height: 100%;
+        }
+        .slider-content {
+            overflow: hidden scroll;
+            height: 100%;
+        }
+        .slider-list {
+            height: 100%;
+            transition: transform 0.2s ease;
+        }
+        .slider-item {
+            height: 100%;
+        }
+        .slider-item span {
+            word-break: break-all;
+        }
+    </style>
+    <script src="./node_modules/vconsole/dist/vconsole.min.js"></script>
+    <script>
+        var vconsole = new VConsole()
+    </script>
+</head>
+<body>
+    <!-- <div class="slider-head"></div> -->
+    <div class="slider-content">
+        <div class="slider-list flex-box">
+            <div class="slider-item"><span>slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1slider1</span></div>
+            <div class="slider-item"><span>slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2slider2</span></div>
+            <div class="slider-item"><span>slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3slider3</span></div>
+            <div class="slider-item"><span>slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4slider4</span></div>
+            <div class="slider-item"><span>slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5slider5</span></div>
+            <div class="slider-item"><span>slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6slider6</span></div>
+        </div>
+    </div>
+    <script>
+        let width = window.innerWidth // 屏幕宽度
+        let slContentNode = document.querySelector('.slider-content')
+        let slListNode = document.querySelector('.slider-list')
+        let slItemNodes = document.querySelectorAll('.slider-item')
+        let tabIndex = 0 // 当前tab序号
+        let tabsCount = slItemNodes.length // tab总数
+        
+    </script>
+    <script>
+        const DIRECTIONS = {
+            right: 'right',
+            left: 'left',
+            bottom: 'bottom',
+            top: 'top',
+            none: 'none'
+        }
+        let startClientX = 0
+        let startClientY = 0
+        let threshold = 20
+        function getDirection(distX, distY) {
+            if (distX > 0 && distY === 0) return DIRECTIONS.right
+            if (distX < 0 && distY === 0) return DIRECTIONS.left
+            if (distX === 0 && distY > 0) return DIRECTIONS.bottom
+            if (distX === 0 && distY < 0) return DIRECTIONS.top
+            if (distX === 0 && distY === 0) return DIRECTIONS.none
+            if (distX !== 0 && distY !== 0 && Math.abs(distX) >= Math.abs(distY)) return distX > 0 ? DIRECTIONS.right : DIRECTIONS.left
+            if (distX !== 0 && distY !== 0 && Math.abs(distX) < Math.abs(distY)) return distY > 0 ? DIRECTIONS.bottom : DIRECTIONS.top
+        }
+        function touchstartEvent(e) {
+            let touch = e.changedTouches[0]
+            if (touch) { // 初始触摸位置
+                startClientX = touch.clientX
+                startClientY = touch.clientY
+            }
+        }
+        function touchmoveEvent(e) {
+            // console.log('d-touchmove', e)
+        }
+        function touchendEvent(e) {
+            let touch = e.changedTouches[0]
+            if (touch) {
+                let endClientX = touch.clientX
+                let endClientY = touch.clientY
+                let distX = endClientX - startClientX
+                let distY = endClientY - startClientY
+                let direction = getDirection(distX, distY)
+                moveTo(direction, Math.abs(distX), Math.abs(distY))
+            }
+        }
+        
+        slContentNode.addEventListener('touchstart', touchstartEvent, {passive: false})
+        // document.addEventListener('touchstart', touchmoveEvent, {passive: false})
+        slContentNode.addEventListener('touchend', touchendEvent, {passive: false})
+    </script>
+    <script>
+        slContentNode.style = `width: ${width};`
+        slListNode.style.width = width * tabsCount + 'px'
+        for (let i = 0; i < tabsCount; i++) {
+            slItemNodes[i].style.width = width + 'px'
+        }
+        function moveTo(direction, distanceX, distanceY) {
+            console.log('direction', direction, distanceX, tabIndex)
+            let transform = ''
+            if (direction === DIRECTIONS.left && distanceX > threshold) {
+                if (tabIndex < tabsCount - 1) {
+                    tabIndex++
+                    transform = `translateX(-${tabIndex * width}px)`
+                }
+            } else if (direction === DIRECTIONS.right && distanceX > threshold) {
+                if (tabIndex > 0) {
+                    tabIndex--
+                    transform = `translateX(-${tabIndex * width}px)`
+                }
+            }
+            if (transform) {
+                slListNode.style.transform = transform
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+	"name": "slider",
+	"version": "1.0.0",
+	"description": "A slider componet by javascript",
+	"main": "index.js",
+	"scripts": {
+		"dev": "http-server"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/callmezhenzhen/slider.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/callmezhenzhen/slider/issues"
+	},
+	"homepage": "https://github.com/callmezhenzhen/slider#readme",
+	"devDependencies": {
+		"http-server": "^0.12.3"
+	},
+	"dependencies": {
+		"vconsole": "^3.3.4"
+	}
+}
