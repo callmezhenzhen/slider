@@ -65,7 +65,7 @@
         }
         let startClientX = 0
         let startClientY = 0
-        let threshold = 20
+        let threshold = 50
         function getDirection(distX, distY) {
             if (distX > 0 && distY === 0) return DIRECTIONS.right
             if (distX < 0 && distY === 0) return DIRECTIONS.left
@@ -83,7 +83,15 @@
             }
         }
         function touchmoveEvent(e) {
-            // console.log('d-touchmove', e)
+            let touch = e.changedTouches[0]
+            if (touch) {
+                let endClientX = touch.clientX
+                let endClientY = touch.clientY
+                let distX = endClientX - startClientX
+                let distY = endClientY - startClientY
+                let direction = getDirection(distX, distY)
+                moveTo(direction, Math.abs(distX), Math.abs(distY))
+            }
         }
         function touchendEvent(e) {
             let touch = e.changedTouches[0]
@@ -98,7 +106,7 @@
         }
         
         slContentNode.addEventListener('touchstart', touchstartEvent, {passive: false})
-        // document.addEventListener('touchstart', touchmoveEvent, {passive: false})
+        // slContentNode.addEventListener('touchmove', touchmoveEvent, {passive: false})
         slContentNode.addEventListener('touchend', touchendEvent, {passive: false})
     </script>
     <script>

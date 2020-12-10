@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>pulldownrefresh</title>
+    <style>
+        .item {
+            padding: 20px;
+        }
+        .content {
+            transition: transform .2s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="tips"></div>
+    <div class="content">
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+        <div class="item">这是内容</div>
+    </div>
+    <script>
+        const DIRECTIONS = {
+            right: 'right',
+            left: 'left',
+            bottom: 'bottom',
+            top: 'top',
+            none: 'none'
+        }
+        let startClientX = 0
+        let startClientY = 0
+        let threshold = 50
+        const refreshNode = document.querySelector('.content')
+        const tipsNode = document.querySelector('.tips')
+        function touchstartEvent (e) {
+            let touch = e.changedTouches[0]
+            if (touch) { // 初始触摸位置
+                startClientX = touch.clientX
+                startClientY = touch.clientY
+            }
+        }
+        function touchmoveEvent (e) {
+            let touch = e.changedTouches[0]
+            if (touch) {
+                pull(touch.clientX, touch.clientY, 'touchmove')
+            }
+        }
+        function touchendEvent (e) {
+            let touch = e.changedTouches[0]
+            if (touch) {
+                pull(touch.clientX, touch.clientY, 'touchend')
+            }
+        }
+        function getDirection (distX, distY, action) {
+            if (distX > 0 && distY === 0) return DIRECTIONS.right
+            if (distX < 0 && distY === 0) return DIRECTIONS.left
+            if (distX === 0 && distY > 0) return DIRECTIONS.bottom
+            if (distX === 0 && distY < 0) return DIRECTIONS.top
+            if (distX === 0 && distY === 0) return DIRECTIONS.none
+            if (distX !== 0 && distY !== 0 && Math.abs(distX) >= Math.abs(distY)) return distX > 0 ? DIRECTIONS.right : DIRECTIONS.left
+            if (distX !== 0 && distY !== 0 && Math.abs(distX) < Math.abs(distY)) return distY > 0 ? DIRECTIONS.bottom : DIRECTIONS.top
+        }
+        function pull (endClientX, endClientY, action) {
+            let distX = endClientX - startClientX
+            let distY = endClientY - startClientY
+            let direction = getDirection(distX, distY)
+            let asby = Math.abs(distY)
+            console.log(direction, asby)
+            if (direction === DIRECTIONS.bottom && asby > threshold && asby < 120 && action === 'touchmove') {
+                refreshNode.style.transform = `translateY(${asby}px)`
+            } else if (asby > 120) { // 还要考虑滑动距离大于120的情况
+
+            } else if (action === 'touchend') {
+                refreshNode.style.transform = `translateY(0)`
+            }
+        }
+        refreshNode.addEventListener('touchstart', touchstartEvent, false)
+        refreshNode.addEventListener('touchmove', touchmoveEvent, false)
+        refreshNode.addEventListener('touchend', touchendEvent, false)
+    </script>
+</body>
+</html>
